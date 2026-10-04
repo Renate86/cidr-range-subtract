@@ -35,3 +35,10 @@ The trade-off: everything lives in bigint, which is fine for IPv6's 128-bit spac
 - **No mixed address families.** Subtracting IPv6 from IPv4 (or vice versa) throws. The version is inferred from the minuend; an empty minuend adopts the subtrahend's version.
 - **IPv6 formatting is canonical.** Output uses lowercase hex with maximal `::` compression per RFC 5952, so `2001:DB8:0000:0000:0000:0000:0000:0000/32` comes back as `2001:db8::/32`.
 - **Empty minuend → empty result**, regardless of the subtrahend. Empty subtrahend → the minuend returned as a minimal canonical CIDR list.
+
+## Performance
+
+The window keeps a bounded buffer, so `push` is constant time and memory does not
+grow with the length of the stream. `peak` and `trough` are linear in the window
+size, which is the trade that keeps `push` cheap.
+
